@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Markdig" Version="1.2.0" />
+    <ProjectReference Include="..\MDReader.Core\MDReader.Core.csproj" />
   </ItemGroup>
 
 </Project>

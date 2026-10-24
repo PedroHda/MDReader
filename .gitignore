@@ -1,6 +1,10 @@
 bin/
 obj/
 dist/
+dist-android/
+.local-signing/
+*.keystore
+*.jks
 .vs/
 *.user
 *.suo

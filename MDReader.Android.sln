@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDReader.Android", "MDReader.Android\MDReader.Android.csproj", "{E8617696-123D-436D-BCA3-B20BC8CF7DF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDReader.Core", "MDReader.Core\MDReader.Core.csproj", "{24288E33-3B87-404D-B4AB-8558E2C66FF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDReader.Core.Tests", "MDReader.Core.Tests\MDReader.Core.Tests.csproj", "{4AE0BC71-F9EC-45BD-B2B3-2F62BD019995}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8617696-123D-436D-BCA3-B20BC8CF7DF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8617696-123D-436D-BCA3-B20BC8CF7DF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8617696-123D-436D-BCA3-B20BC8CF7DF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8617696-123D-436D-BCA3-B20BC8CF7DF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24288E33-3B87-404D-B4AB-8558E2C66FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24288E33-3B87-404D-B4AB-8558E2C66FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24288E33-3B87-404D-B4AB-8558E2C66FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24288E33-3B87-404D-B4AB-8558E2C66FF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AE0BC71-F9EC-45BD-B2B3-2F62BD019995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AE0BC71-F9EC-45BD-B2B3-2F62BD019995}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AE0BC71-F9EC-45BD-B2B3-2F62BD019995}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AE0BC71-F9EC-45BD-B2B3-2F62BD019995}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

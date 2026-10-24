@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">MDReader</string>
+  <string name="open_file">Abrir arquivo</string>
+  <string name="reload_file">Recarregar</string>
+  <string name="preview">Visualização</string>
+  <string name="raw_text">Texto bruto</string>
+  <string name="no_file">Nenhum arquivo carregado</string>
+  <string name="ready">Pronto</string>
+  <string name="loading">Carregando arquivo…</string>
+</resources>
