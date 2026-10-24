@@ -1,3 +1,5 @@
+![Ícone do MDReader](docs/images/logo.png)
+
 # MDReader
 
 Leitor de Markdown para **Windows e Android**, desenvolvido em C#. Abra arquivos `.md` ou `.markdown`, consulte o texto original e visualize o conteúdo formatado.
@@ -8,8 +10,19 @@ A aplicação usa **Markdig** para converter Markdown em HTML e permite recarreg
 
 **Android:** [Baixar MDReader.apk](https://github.com/PedroHda/MDReader/releases/download/android-v1.0.0/MDReader.apk) · [Release e notas da versão](https://github.com/PedroHda/MDReader/releases/tag/android-v1.0.0)
 
+## Downloads
+
+| Plataforma | Distribuição | Como obter |
+| --- | --- | --- |
+| Android 8.0 ou superior | APK assinado, versão 1.0.0 | [Baixar MDReader.apk](https://github.com/PedroHda/MDReader/releases/download/android-v1.0.0/MDReader.apk) |
+| Windows 64 bits | Executável portátil | [Executar pelo código-fonte](#executar-pelo-código-fonte) ou [gerar o executável](#gerar-o-executável-portátil) |
+
+O APK pode ser instalado diretamente no celular. A versão Windows é publicada localmente pelo script `publish.ps1`; o executável Windows ainda não está anexado à Release Android.
+
 ## Índice
 
+- [Downloads](#downloads)
+- [Capturas de tela](#capturas-de-tela)
 - [Funcionalidades](#funcionalidades)
 - [Tecnologias](#tecnologias)
 - [Requisitos](#requisitos)
@@ -24,6 +37,30 @@ A aplicação usa **Markdig** para converter Markdown em HTML e permite recarreg
 - [Solução de problemas](#solução-de-problemas)
 - [Contribuições](#contribuições)
 - [Licença](#licença)
+
+## Capturas de tela
+
+As imagens abaixo são **capturas reais da aplicação Windows**, usando o documento opcional [guia.md](docs/examples/guia.md). A versão Android possui uma interface nativa própria e não é representada por estas capturas.
+
+### Leitura formatada
+
+Títulos, negrito, itálico, código inline, listas e citações na aba **Visualização**:
+
+![Janela Windows do MDReader com o arquivo guia.md aberto na aba Visualização, exibindo títulos, texto formatado, lista e citação.](docs/images/windows-preview.jpg)
+
+### Tabelas e blocos de código
+
+O mesmo documento, após rolar a área de leitura:
+
+![Janela Windows do MDReader exibindo uma tabela de acompanhamento e um bloco de código C# formatado.](docs/images/windows-table-code.jpg)
+
+### Texto bruto
+
+A aba **Texto bruto** permite consultar a marcação original sem alterar o arquivo:
+
+![Janela Windows do MDReader na aba Texto bruto, mostrando a sintaxe Markdown original do documento guia.md.](docs/images/windows-raw.jpg)
+
+Para reproduzir essas telas, execute a versão Windows, selecione `docs/examples/guia.md` e alterne entre as abas. O arquivo é apenas um exemplo: o aplicativo não depende dele para funcionar.
 
 ## Funcionalidades
 
@@ -245,6 +282,14 @@ MDReader/
 |-- README.md
 |-- publish.ps1
 |-- publish-android.ps1
+|-- docs/
+|   |-- examples/
+|   |   `-- guia.md
+|   `-- images/
+|       |-- logo.png
+|       |-- windows-preview.jpg
+|       |-- windows-table-code.jpg
+|       `-- windows-raw.jpg
 |-- MDReader.Core/
 |   |-- MDReader.Core.csproj
 |   |-- MarkdownContentReader.cs
@@ -299,6 +344,20 @@ MDReader/
 `MDReader.sln` contém os projetos necessários à versão Windows. `MDReader.Android.sln` contém a versão Android, a biblioteca compartilhada e os testes, permitindo desenvolver para Windows sem instalar as ferramentas Android.
 
 O fluxo principal é: **seleção do arquivo > validação > leitura > documento > texto bruto e HTML renderizado**.
+
+```mermaid
+flowchart TD
+    File["Arquivo .md ou .markdown"] --> Windows["Windows: OpenFileDialog e leitura local"]
+    File --> Android["Android: seletor de documentos e ContentResolver"]
+    Windows --> Source["Conteúdo Markdown validado"]
+    Android --> Source
+    Source --> Raw["Aba Texto bruto"]
+    Source --> Renderer["MDReader.Core: Markdig e estilos HTML"]
+    Renderer --> Desktop["WebBrowser do Windows"]
+    Renderer --> Mobile["WebView do Android"]
+```
+
+No Android, a leitura de streams também utiliza `MarkdownContentReader`, com limite de tamanho e cancelamento. No Windows, `MarkdownFileReader` mantém a leitura local com `File.ReadAllText`. As duas interfaces compartilham a conversão para HTML.
 
 ## Renderização e limitações
 
