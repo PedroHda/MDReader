@@ -8,16 +8,18 @@ A versão Windows usa Windows Forms e gera um `.exe` portátil. A versão Androi
 
 A aplicação usa **Markdig** para converter Markdown em HTML e permite recarregar o documento depois de alterações feitas em outro editor.
 
-**Android:** [Baixar MDReader.apk](https://github.com/PedroHda/MDReader/releases/download/android-v1.0.0/MDReader.apk) · [Release e notas da versão](https://github.com/PedroHda/MDReader/releases/tag/android-v1.0.0)
+**Android:** [Pasta do APK](downloads/android) · [Baixar MDReader.apk](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader.apk) · [Release e notas da versão](https://github.com/PedroHda/MDReader/releases/tag/android-v1.0.0)
 
 ## Downloads
 
 | Plataforma | Distribuição | Como obter |
 | --- | --- | --- |
-| Android 8.0 ou superior | APK assinado, versão 1.0.0 | [Baixar MDReader.apk](https://github.com/PedroHda/MDReader/releases/download/android-v1.0.0/MDReader.apk) |
+| Android 8.0 ou superior | APK assinado, versão 1.0.0 | [Abrir pasta do APK](downloads/android) ou [baixar diretamente](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader.apk) |
 | Windows 64 bits | Executável portátil | [Executar pelo código-fonte](#executar-pelo-código-fonte) ou [gerar o executável](#gerar-o-executável-portátil) |
 
 O APK pode ser instalado diretamente no celular. A versão Windows é publicada localmente pelo script `publish.ps1`; o executável Windows ainda não está anexado à Release Android.
+
+O instalador Android está visível nos arquivos do repositório em [downloads/android/MDReader.apk](downloads/android/MDReader.apk). Essa cópia é idêntica ao APK da Release `android-v1.0.0` e acompanha um arquivo [SHA256SUMS](downloads/android/SHA256SUMS) para conferir sua integridade.
 
 ## Índice
 
@@ -209,7 +211,7 @@ O executável pode ser colocado em outra pasta do computador. Ele não depende d
 
 Imagens e outros recursos referenciados por um documento Markdown continuam sendo arquivos separados. Para compartilhar também o documento, preserve a organização dos seus recursos relativos.
 
-As pastas `bin`, `obj`, `dist` e `dist-android` são ignoradas pelo Git. Um push do código-fonte não publica automaticamente os binários; anexe-os a uma Release para disponibilizar o download pelo GitHub.
+As pastas `bin`, `obj`, `dist` e `dist-android` são ignoradas pelo Git. Uma cópia do APK distribuído é versionada na pasta [downloads/android](downloads/android), além de estar disponível na Release do GitHub.
 
 ## Versão Android e APK
 
@@ -217,7 +219,7 @@ As pastas `bin`, `obj`, `dist` e `dist-android` são ignoradas pelo Git. Um push
 
 A versão Android requer **Android 8.0 ou superior** e inclui suporte a ARM de 32 bits, ARM64 e x64. O celular não precisa ter .NET instalado.
 
-1. Baixe o [MDReader.apk da Release Android](https://github.com/PedroHda/MDReader/releases/download/android-v1.0.0/MDReader.apk), ou use o arquivo `dist-android\MDReader.apk` gerado localmente.
+1. Abra a pasta [downloads/android](downloads/android) e baixe o [MDReader.apk](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader.apk), ou use a cópia disponível na [Release Android](https://github.com/PedroHda/MDReader/releases/tag/android-v1.0.0).
 2. Envie esse arquivo ao celular e abra-o pelo gerenciador de arquivos.
 3. Se o Android solicitar, autorize esse gerenciador a instalar aplicativos dessa fonte.
 4. Conclua a instalação e abra **MDReader**.
@@ -243,6 +245,8 @@ dist-android\MDReader.apk
 ```
 
 Essa pasta é independente de `dist`, usada pelo Windows. A publicação Android substitui apenas o APK de saída e não apaga a distribuição Windows.
+
+A cópia em `downloads/android` representa a versão disponibilizada no repositório. Ao distribuir uma nova versão, atualize o APK dessa pasta e o arquivo `SHA256SUMS` antes de enviar o commit ao GitHub.
 
 Se o SDK ou o JDK estiverem em locais não detectados automaticamente, informe os diretórios:
 
@@ -282,6 +286,11 @@ MDReader/
 |-- README.md
 |-- publish.ps1
 |-- publish-android.ps1
+|-- downloads/
+|   `-- android/
+|       |-- MDReader.apk
+|       |-- README.md
+|       `-- SHA256SUMS
 |-- docs/
 |   |-- examples/
 |   |   `-- guia.md
