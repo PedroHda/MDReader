@@ -1,7 +1,7 @@
 param(
     [ValidateRange(1, 2100000000)]
-    [int]$VersionCode = 10100,
-    [string]$VersionName = "1.1.0",
+    [int]$VersionCode = 10101,
+    [string]$VersionName = "1.1.1",
     [string]$AndroidSdkDirectory,
     [string]$JavaSdkDirectory,
     [string]$SigningKeyStorePath,
@@ -78,7 +78,7 @@ try {
     $publishArguments = @(
         "publish", $projectPath, "-c", "Release", "-o", $publishPath,
         # Isolate signed releases so ordinary builds cannot supply a cached debug-signed APK.
-        "-p:OutputPath=bin\apk-release\", "-p:IntermediateOutputPath=obj\apk-release\",
+        "-p:OutputPath=bin\apk-release-$VersionCode\", "-p:IntermediateOutputPath=obj\apk-release-$VersionCode\",
         "-p:AndroidPackageFormats=apk", "-p:AndroidKeyStore=true",
         "-p:AndroidSigningKeyStore=$keyStorePath", "-p:AndroidSigningKeyAlias=mdreader",
         "-p:AndroidSigningStorePass=env:MDREADER_ANDROID_SIGNING_PASSWORD",

@@ -6,7 +6,7 @@ O instalador está nesta pasta: **[MDReader.apk](MDReader.apk)**.
 
 | Informação | Valor |
 | --- | --- |
-| Versão | 1.1.0 (10100) |
+| Versão | 1.1.1 (10101) |
 | Sistema mínimo | Android 8.0 |
 | Arquiteturas | ARM, ARM64 e x64 |
 | Arquivo | `MDReader.apk` |
@@ -21,6 +21,8 @@ O instalador está nesta pasta: **[MDReader.apk](MDReader.apk)**.
 5. Toque em **Abrir arquivo** e selecione um `.md` ou `.markdown`.
 
 O aplicativo inclui visualização formatada, texto bruto, busca, sumário, favoritos, histórico, modo escuro e ajustes de leitura. Use **Abrir pasta** para documentos com imagens relativas. Não exige instalação separada do .NET no celular.
+
+A versão **1.1.1** corrige o fechamento imediato ao abrir o app, causado pelo registro nativo dos métodos da tela Android no APK Release. Instale esta versão por cima da anterior; não é necessário desinstalar nem limpar os dados.
 
 ## Integridade
 

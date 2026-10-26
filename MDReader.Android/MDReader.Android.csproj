@@ -8,13 +8,15 @@
     <SupportedOSPlatformVersion>26.0</SupportedOSPlatformVersion>
     <ApplicationId>com.pedrohda.mdreader</ApplicationId>
     <ApplicationTitle>MDReader</ApplicationTitle>
-    <ApplicationVersion>10100</ApplicationVersion>
-    <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>10101</ApplicationVersion>
+    <ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
     <AndroidPackageFormats>apk</AndroidPackageFormats>
     <RuntimeIdentifiers>android-arm;android-arm64;android-x64</RuntimeIdentifiers>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <RunAOTCompilation>false</RunAOTCompilation>
+    <!-- Use runtime JNI registration: native marshal entry points failed during Activity startup. -->
+    <AndroidEnableMarshalMethods>false</AndroidEnableMarshalMethods>
     <PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
   <ItemGroup>

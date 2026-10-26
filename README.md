@@ -6,6 +6,8 @@ Leitor de Markdown para **Windows e Android**, desenvolvido em C# com .NET 10. A
 
 **Versão 1.1.0:** WebView2 no Windows, modo escuro, busca, sumário, favoritos, histórico e preferências de leitura.
 
+**Correção Android 1.1.1:** resolve o fechamento imediato na inicialização do APK Release. O executável Windows permanece na versão 1.1.0.
+
 ## Downloads
 
 | Plataforma | Arquivo | Requisitos |
@@ -263,6 +265,12 @@ Para atualizar as cópias públicas e os checksums, após gerar ambas as platafo
 
 As saídas intermediárias `bin`, `obj`, `dist` e `dist-android` são ignoradas pelo Git; as cópias em `downloads` são versionadas.
 
+Para atualizar somente o APK, sem substituir o executável Windows:
+
+```powershell
+.\scripts\Update-Downloads.ps1 -AndroidApk .\dist-android\MDReader.apk -Version "1.1.1"
+```
+
 ## Builds e releases automáticas
 
 O workflow [ci.yml](.github/workflows/ci.yml) executa testes e builds em pushes para `master` e pull requests. Publica artefatos temporários do Windows e um APK **Debug**, não destinado à distribuição como atualização do APK Release.
@@ -322,6 +330,8 @@ dotnet build .\MDReader.Android.sln -c Debug
 ```
 
 A suíte cobre marcações Markdown, HTML não executável, links internos, extração de sumário, leitura UTF-8/UTF-16, arquivos vazios/binários, cancelamento, limite de tamanho, extensões, caminhos de imagens, preferências corrompidas, favoritos e restauração de estado.
+
+O workflow [Android startup](.github/workflows/android-startup.yml) instala o APK de `downloads/android` em emuladores Android 8 (API 26) e Android 15 (API 35), verifica a tela inicial e reabre o app. Falhas incluem logs e captura de tela nos artefatos da execução. Esse teste executa o APK Release distribuído, não apenas uma compilação Debug.
 
 ### Verificação manual
 

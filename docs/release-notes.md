@@ -1,3 +1,11 @@
+# Android 1.1.1
+
+- Corrige o fechamento na abertura do APK Release (`UnsatisfiedLinkError` em `MainActivity.n_onCreate`).
+- Desativa os marshal methods nativos e usa o registro JNI em tempo de execução.
+- Isola os intermediários de publicação por código de versão para evitar reaproveitar wrappers de outra versão.
+- Adiciona teste automatizado de instalação, abertura e reabertura do APK distribuído em Android 8 e Android 15.
+- Mantém a assinatura anterior, permitindo atualizar sem desinstalar. O Windows permanece na versão 1.1.0.
+
 # MDReader 1.1
 
 - Windows atualizado para .NET 10 e WebView2.
