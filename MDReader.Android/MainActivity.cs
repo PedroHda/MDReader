@@ -320,7 +320,13 @@ public sealed class MainActivity : Activity
             if (view is WebView) return;
             if (view is TextView text) text.SetTextColor(foreground);
             if (view is ImageButton image) image.ImageTintList = ColorStateList.ValueOf(foreground);
-            if (view is Button button) button.BackgroundTintList = ColorStateList.ValueOf(surface);
+            if (view is RadioButton tab)
+            {
+                var states = new[] { new[] { Android.Resource.Attribute.StateChecked }, Array.Empty<int>() };
+                tab.BackgroundTintList = new ColorStateList(states, new[] { (int)Color.ParseColor("#176A58"), (int)surface });
+                tab.SetTextColor(new ColorStateList(states, new[] { (int)Color.White, (int)foreground }));
+            }
+            else if (view is Button button) button.BackgroundTintList = ColorStateList.ValueOf(surface);
             if (view is not TextView && view is not ImageButton) view.SetBackgroundColor(background);
             if (view is ViewGroup group) for (var i = 0; i < group.ChildCount; i++) Apply(group.GetChildAt(i)!);
         }
