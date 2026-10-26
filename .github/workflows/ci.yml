@@ -32,8 +32,6 @@ jobs:
   android:
     needs: tests
     runs-on: ubuntu-latest
-    env:
-      ANDROID_HOME: ${{ runner.temp }}/android-sdk
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-dotnet@v5
@@ -45,7 +43,10 @@ jobs:
           java-version: '21'
       - run: dotnet workload install android
       - name: Install Android SDK dependencies
-        run: dotnet build MDReader.Android/MDReader.Android.csproj -t:InstallAndroidDependencies -f net10.0-android -p:AndroidSdkDirectory="$ANDROID_HOME" -p:JavaSdkDirectory="$JAVA_HOME" -p:AcceptAndroidSDKLicenses=True
+        run: |
+          android_sdk="$RUNNER_TEMP/android-sdk"
+          echo "ANDROID_HOME=$android_sdk" >> "$GITHUB_ENV"
+          dotnet build MDReader.Android/MDReader.Android.csproj -t:InstallAndroidDependencies -f net10.0-android -p:AndroidSdkDirectory="$android_sdk" -p:JavaSdkDirectory="$JAVA_HOME" -p:AcceptAndroidSDKLicenses=True
       - run: dotnet build MDReader.Android/MDReader.Android.csproj -c Debug -p:AndroidSdkDirectory="$ANDROID_HOME" -p:JavaSdkDirectory="$JAVA_HOME"
       - uses: actions/upload-artifact@v4
         with:
