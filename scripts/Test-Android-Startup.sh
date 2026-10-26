@@ -6,11 +6,12 @@ output="artifacts/android-startup"
 package="com.pedrohda.mdreader"
 mkdir -p "$output"
 adb install -r "$apk"
-adb logcat -c
+# Old system images can refuse to clear a log buffer; app checks must still run.
+adb logcat -c || echo "Could not clear log buffers; retaining existing logs."
 adb shell am start -W -n "$package/$package.MainActivity"
 sleep 12
-adb logcat -d > "$output/logcat.txt"
-adb logcat -d -b crash > "$output/crash.txt"
+adb logcat -d > "$output/logcat.txt" || true
+adb logcat -d -b crash > "$output/crash.txt" || true
 adb exec-out screencap -p > "$output/screen.png"
 if ! adb shell pidof "$package"; then
     cat "$output/crash.txt"
@@ -29,8 +30,8 @@ sleep 2
 adb shell am force-stop "$package"
 adb shell am start -W -n "$package/$package.MainActivity"
 sleep 5
-adb logcat -d > "$output/logcat.txt"
-adb logcat -d -b crash > "$output/crash.txt"
+adb logcat -d > "$output/logcat.txt" || true
+adb logcat -d -b crash > "$output/crash.txt" || true
 if ! adb shell pidof "$package"; then
     cat "$output/crash.txt"
     echo "Application exited after reopening." >&2
