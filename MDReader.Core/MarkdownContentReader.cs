@@ -28,7 +28,7 @@ public static class MarkdownContentReader
         {
             if (content.Length + bytesRead > MaximumBytes)
             {
-                throw new InvalidDataException("O arquivo é muito grande. No Android, o limite é de 5 MB.");
+                throw new InvalidDataException("O arquivo é muito grande. O limite de leitura é de 5 MB.");
             }
 
             content.Write(buffer, 0, bytesRead);

@@ -2,488 +2,369 @@
 
 # MDReader
 
-Leitor de Markdown para **Windows e Android**, desenvolvido em C#. Abra arquivos `.md` ou `.markdown`, consulte o texto original e visualize o conteúdo formatado.
+Leitor de Markdown para **Windows e Android**, desenvolvido em C# com .NET 10. Abra arquivos `.md` ou `.markdown`, leia o conteúdo formatado ou consulte o texto original, sem modificar seus documentos.
 
-A versão Windows usa Windows Forms e gera um `.exe` portátil. A versão Android usa interface nativa com .NET for Android e gera um `.apk` instalável.
-
-A aplicação usa **Markdig** para converter Markdown em HTML e permite recarregar o documento depois de alterações feitas em outro editor.
-
-**Android:** [Pasta do APK](downloads/android) · [Baixar MDReader.apk](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader.apk) · [Release e notas da versão](https://github.com/PedroHda/MDReader/releases/tag/android-v1.0.0)
+**Versão 1.1.0:** WebView2 no Windows, modo escuro, busca, sumário, favoritos, histórico e preferências de leitura.
 
 ## Downloads
 
-| Plataforma | Distribuição | Como obter |
+| Plataforma | Arquivo | Requisitos |
 | --- | --- | --- |
-| Android 8.0 ou superior | APK assinado, versão 1.0.0 | [Abrir pasta do APK](downloads/android) ou [baixar diretamente](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader.apk) |
-| Windows 64 bits | Executável portátil | [Executar pelo código-fonte](#executar-pelo-código-fonte) ou [gerar o executável](#gerar-o-executável-portátil) |
+| Windows x64 | [MDReader.exe](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/windows/MDReader.exe) · [Pasta Windows](downloads/windows) | Windows 64 bits e WebView2 Runtime |
+| Android | [MDReader.apk](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader.apk) · [Pasta Android](downloads/android) | Android 8.0 ou superior; ARM, ARM64 ou x64 |
 
-O APK pode ser instalado diretamente no celular. A versão Windows é publicada localmente pelo script `publish.ps1`; o executável Windows ainda não está anexado à Release Android.
+[Releases e notas das versões](https://github.com/PedroHda/MDReader/releases) · [Histórico de builds](https://github.com/PedroHda/MDReader/actions)
 
-O instalador Android está visível nos arquivos do repositório em [downloads/android/MDReader.apk](downloads/android/MDReader.apk). Essa cópia é idêntica ao APK da Release `android-v1.0.0` e acompanha um arquivo [SHA256SUMS](downloads/android/SHA256SUMS) para conferir sua integridade.
+O executável Windows é portátil e inclui o runtime .NET. Pode ficar em qualquer pasta, sem depender de `bin`, do código-fonte ou do Visual Studio. O componente de renderização [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) precisa estar instalado; quando indisponível, a leitura de texto bruto continua acessível.
+
+O APK é assinado com a chave do projeto. Não exige .NET no celular. Baixe-o e abra pelo gerenciador de arquivos; o Android pode solicitar autorização para instalar aplicativos dessa fonte. Para atualizar uma instalação existente, a assinatura deve ser a mesma.
+
+Os arquivos [SHA256SUMS do Windows](downloads/windows/SHA256SUMS) e [SHA256SUMS do Android](downloads/android/SHA256SUMS) permitem conferir os downloads:
+
+```powershell
+Get-FileHash .\downloads\windows\MDReader.exe -Algorithm SHA256
+Get-FileHash .\downloads\android\MDReader.apk -Algorithm SHA256
+```
 
 ## Índice
 
-- [Downloads](#downloads)
 - [Capturas de tela](#capturas-de-tela)
 - [Funcionalidades](#funcionalidades)
-- [Tecnologias](#tecnologias)
-- [Requisitos](#requisitos)
-- [Executar pelo código-fonte](#executar-pelo-código-fonte)
 - [Como usar](#como-usar)
-- [Gerar o executável portátil](#gerar-o-executável-portátil)
-- [Distribuir o aplicativo](#distribuir-o-aplicativo)
-- [Versão Android e APK](#versão-android-e-apk)
-- [Estrutura do projeto](#estrutura-do-projeto)
-- [Renderização e limitações](#renderização-e-limitações)
-- [Verificação e testes manuais](#verificação-e-testes-manuais)
+- [Tecnologias e arquitetura](#tecnologias-e-arquitetura)
+- [Executar pelo código-fonte](#executar-pelo-código-fonte)
+- [Publicação local](#publicação-local)
+- [Builds e releases automáticas](#builds-e-releases-automáticas)
+- [Segurança e privacidade](#segurança-e-privacidade)
+- [Limitações](#limitações)
+- [Testes](#testes)
 - [Solução de problemas](#solução-de-problemas)
-- [Contribuições](#contribuições)
-- [Licença](#licença)
 
 ## Capturas de tela
 
-As imagens abaixo são **capturas reais da aplicação Windows**, usando o documento opcional [guia.md](docs/examples/guia.md). A versão Android possui uma interface nativa própria e não é representada por estas capturas.
+Capturas **reais da versão Windows 1.1.0**, usando o documento opcional [guia.md](docs/examples/guia.md). Não são representações da interface Android.
 
-### Leitura formatada
+### Leitura formatada e sumário
 
-Títulos, negrito, itálico, código inline, listas e citações na aba **Visualização**:
+![MDReader no Windows, com sumário lateral e documento formatado com títulos, listas e tabela.](docs/images/windows-preview.jpg)
 
-![Janela Windows do MDReader com o arquivo guia.md aberto na aba Visualização, exibindo títulos, texto formatado, lista e citação.](docs/images/windows-preview.jpg)
+### Modo escuro
 
-### Tabelas e blocos de código
+![MDReader no modo escuro, com controles de fonte, zoom e largura.](docs/images/windows-dark.jpg)
 
-O mesmo documento, após rolar a área de leitura:
+### Busca no documento
 
-![Janela Windows do MDReader exibindo uma tabela de acompanhamento e um bloco de código C# formatado.](docs/images/windows-table-code.jpg)
+![Busca por documento, com quatro ocorrências e destaque do resultado atual.](docs/images/windows-search.jpg)
+
+### Tabelas e código
+
+![Navegação pelo sumário até um bloco de código e checklist.](docs/images/windows-table-code.jpg)
 
 ### Texto bruto
 
-A aba **Texto bruto** permite consultar a marcação original sem alterar o arquivo:
+![Aba de texto bruto do MDReader mostrando a marcação original.](docs/images/windows-raw.jpg)
 
-![Janela Windows do MDReader na aba Texto bruto, mostrando a sintaxe Markdown original do documento guia.md.](docs/images/windows-raw.jpg)
-
-Para reproduzir essas telas, execute a versão Windows, selecione `docs/examples/guia.md` e alterne entre as abas. O arquivo é apenas um exemplo: o aplicativo não depende dele para funcionar.
+O documento de exemplo não é necessário para executar o aplicativo.
 
 ## Funcionalidades
 
-- Seleção de arquivos pelo diálogo nativo do Windows.
-- Aceitação de `.md` e `.markdown`, sem diferenciar letras maiúsculas de minúsculas.
-- Exibição do nome do arquivo carregado.
-- Aba **Texto bruto**, com o conteúdo original em modo somente leitura.
-- Aba **Visualização**, com o Markdown convertido em HTML.
-- Rolagem para leitura de documentos longos.
-- Botão **Recarregar**, para atualizar o conteúdo do arquivo atual.
-- Mensagens de sucesso, aviso e erro na interface.
-- Tratamento de arquivos vazios, extensões não permitidas, caminhos inválidos, arquivos inexistentes e falhas de leitura.
-- Ícone próprio na janela e no executável.
-- Script para publicar um executável portátil para Windows 64 bits.
-- Versão Android com seleção nativa de documentos, texto bruto, pré-visualização e recarregamento.
+| Recurso | Windows | Android |
+| --- | --- | --- |
+| Seletor nativo de arquivos e validação de extensão | Sim | Sim |
+| Markdown formatado e texto bruto somente leitura | Sim | Sim |
+| Busca e navegação entre resultados | Sim | Sim |
+| Sumário clicável a partir dos títulos | Painel lateral | Menu Sumário |
+| Modo escuro, fonte, zoom e largura de leitura | Barra de ferramentas | Menu Aparência |
+| Recentes, favoritos e retomada de leitura | Sim | Sim |
+| Recarga manual | Sim | Sim |
+| Recarga automática ao detectar alterações | FileSystemWatcher | ContentObserver do provedor |
+| Arrastar um arquivo para a janela | Sim | Não |
+| Integração Abrir com / compartilhamento | Registro opcional por usuário | Arquivos recebidos via intents |
+| Imagens relativas do documento | Na pasta do arquivo | Ao abrir por uma pasta autorizada |
+| Acesso a uma pasta e subpastas | Pelo seletor do sistema | Menu Abrir pasta |
 
-Entre as marcações processadas pelo Markdig estão títulos, negrito, itálico, tachado, listas, citações, links, imagens, tabelas, checklists, código inline, blocos de código e linhas horizontais.
+A renderização com Markdig inclui títulos, negrito, itálico, tachado, listas e sublistas, citações, links, imagens, tabelas, checklists, notas de rodapé, código inline, blocos de código e linhas horizontais.
 
-## Tecnologias
+A leitura ocorre em segundo plano e tem limite de **5 MiB por documento**, em ambas as plataformas. Arquivos vazios são aceitos com aviso. Extensões inválidas, binários, codificação inválida, arquivos removidos, permissões revogadas e falhas de leitura geram mensagens amigáveis, preservando o documento anterior sempre que possível.
 
-| Tecnologia | Uso no projeto |
+## Como usar
+
+### Windows
+
+1. Abra `MDReader.exe` e clique em **Abrir**, ou arraste um arquivo para a janela.
+2. Escolha um `.md` ou `.markdown`.
+3. Alterne entre **Visualização** e **Texto bruto**.
+4. Use o painel **Sumário** para ir a um título ou **Recentes** para reabrir um documento.
+5. Use a estrela para favoritar; favoritos aparecem primeiro no histórico.
+6. Ajuste o modo escuro, fonte, zoom e largura na barra superior.
+7. Edite o documento em outro programa e salve. A recarga automática pode ser desativada no menu **Arquivo**; o botão **Recarregar** continua disponível.
+
+O menu **Arquivo > Registrar no menu Abrir com** adiciona o executável atual às opções do Windows, apenas para o usuário atual. Não muda o aplicativo padrão. Registre depois de colocar o executável no local definitivo; se o mover, registre novamente.
+
+Também é possível iniciar com um documento como argumento:
+
+```powershell
+.\downloads\windows\MDReader.exe "C:\Documentos\anotacoes.md"
+```
+
+| Atalho | Ação |
 | --- | --- |
-| C# / .NET | Linguagem e plataforma de execução |
-| Windows Forms | Janela, botões, abas e seleção de arquivos |
-| `net9.0-windows` | Framework de destino da versão Windows |
-| .NET for Android / `net10.0-android` | Interface nativa e empacotamento APK para Android |
-| `netstandard2.1` | Biblioteca de leitura e renderização compartilhada |
-| Markdig `1.2.0` | Conversão de Markdown para HTML, com `UseAdvancedExtensions()` |
-| `WebBrowser` do WinForms | Exibição do HTML na aba de visualização |
-| `WebView` do Android | Exibição do HTML no celular |
-| PowerShell | Publicação do executável portátil |
+| Ctrl+O | Abrir arquivo |
+| F5 | Recarregar |
+| Ctrl+F | Focar a busca |
+| Enter / F3 | Próximo resultado |
+| Shift+Enter / Shift+F3 | Resultado anterior |
+| Escape na busca | Limpar busca |
+| Ctrl+Shift+D | Alternar modo escuro |
 
-A dependência Markdig está declarada em [MDReader.Core.csproj](MDReader.Core/MDReader.Core.csproj) e é restaurada pelo .NET durante a compilação. As duas interfaces utilizam a biblioteca compartilhada.
+### Android
 
-## Requisitos
+1. Instale o APK e toque em **Abrir arquivo**.
+2. Escolha um documento no seletor do Android.
+3. Alterne entre **Visualização** e **Texto bruto** e use a busca e suas setas.
+4. No menu de três pontos, abra **Recentes e favoritos**, **Sumário** ou **Aparência**.
+5. Para documentos com imagens relativas, use **Abrir pasta**, autorize a pasta do documento e escolha o Markdown dentro dela.
 
-### Para desenvolver ou gerar o executável Windows
+Selecionar somente um arquivo não concede acesso às imagens vizinhas. O modo pasta usa o Storage Access Framework, sem pedir acesso amplo ao armazenamento. O provedor precisa oferecer acesso persistente para reabrir documentos depois que o app for fechado. A recarga automática depende das notificações do provedor; ao voltar ao app, ele também tenta atualizar o documento.
 
-- Windows.
-- SDK do .NET capaz de compilar o destino `net9.0-windows`, como o SDK .NET 9.
-- Acesso à internet para restaurar os pacotes e componentes de publicação que ainda não estiverem no cache.
-- PowerShell para executar o script de publicação.
-- Git, caso queira clonar o repositório pela linha de comando.
+O aplicativo aceita arquivos enviados por **Abrir com** ou **Compartilhar** quando o outro aplicativo fornece uma URI de conteúdo e um nome terminado em `.md` ou `.markdown`. Compartilhamento de texto avulso não é importado como arquivo.
 
-Visual Studio é opcional. Também é possível trabalhar com o projeto pelo terminal.
+## Tecnologias e arquitetura
 
-### Para usar o executável portátil
+| Tecnologia | Responsabilidade |
+| --- | --- |
+| C# / .NET 10 | Linguagem e plataforma compartilhadas |
+| Windows Forms / `net10.0-windows` | Interface desktop nativa |
+| Microsoft.Web.WebView2 `1.0.4314.35` | Renderização moderna no Windows |
+| .NET for Android / `net10.0-android` | Interface Android nativa e APK |
+| Markdig `1.2.0` | Parser Markdown e extensões |
+| System.Text.Json | Preferências, histórico e posições locais |
+| xUnit / Microsoft.NET.Test.Sdk | Testes automatizados |
+| PowerShell / GitHub Actions | Publicação, checksums e automação |
 
-- Windows 64 bits compatível com o runtime .NET incluído na publicação.
-- O arquivo `MDReader.exe` gerado pelo script.
+As dependências estão declaradas nos arquivos `.csproj` e são restauradas pelo .NET. Não há servidor, banco de dados ou cadastro obrigatório.
 
-A publicação é **self-contained**: inclui o runtime necessário, portanto quem recebe essa versão não precisa instalar o SDK nem o runtime .NET separadamente.
+```mermaid
+flowchart TD
+    File["Arquivo .md ou .markdown"] --> Windows["Windows: seletor / arrastar / Abrir com"]
+    File --> Android["Android: SAF / pasta / intents"]
+    Windows --> Reader["Leitura assíncrona, validação e limite de tamanho"]
+    Android --> Reader
+    Reader --> Raw["Texto bruto"]
+    Reader --> Core["MDReader.Core: Markdig, estilos e sumário"]
+    Core --> Desktop["WebView2"]
+    Core --> Mobile["Android WebView"]
+    Windows --> State["Estado JSON local: preferências, favoritos e posições"]
+    Android --> State
+```
+
+```text
+.github/workflows/         Builds, testes e publicação por tag
+MDReader/                  Aplicativo Windows Forms
+  Rendering/               Sessão WebView2, ícones e integração HTML
+  Services/                Validação, leitura e integração Abrir com
+  Ui/                      Janela e eventos da interface
+MDReader.Android/          Aplicativo Android nativo
+  Services/                ContentResolver e navegação de pastas SAF
+  Ui/                      WebView seguro e busca nativa
+MDReader.Core/             Leitura, renderização, sumário e histórico
+  Assets/                  CSS compartilhado e busca controlada do Windows
+MDReader.Core.Tests/       Testes de leitura, segurança e preferências
+docs/                      Capturas reais, exemplo e notas de versão
+downloads/android/         APK distribuído, versão e checksum
+downloads/windows/         EXE distribuído, versão e checksum
+scripts/                   Automação de releases e pasta downloads
+publish.ps1                Publicação Windows
+publish-android.ps1         Publicação Android assinada
+```
+
+`MDReader.sln` contém Windows e Core, sem exigir as ferramentas Android. `MDReader.Android.sln` contém Android, Core e testes. A lógica compartilhada é independente das interfaces.
 
 ## Executar pelo código-fonte
 
-Clone o repositório e entre na pasta:
+### Windows
+
+Requisitos: Windows, SDK .NET 10, WebView2 Runtime e internet para restaurar dependências.
 
 ```powershell
 git clone https://github.com/PedroHda/MDReader.git
 cd MDReader
-```
-
-Se você já baixou o projeto, abra o PowerShell na pasta que contém `MDReader.sln`.
-
-Confira o SDK disponível:
-
-```powershell
-dotnet --info
-```
-
-Restaure as dependências e inicie a aplicação:
-
-```powershell
 dotnet restore .\MDReader.sln
+dotnet build .\MDReader.sln -c Release
 dotnet run --project .\MDReader\MDReader.csproj
 ```
 
-Para compilar sem abrir a janela:
+No Visual Studio, instale o suporte a desenvolvimento desktop com .NET, abra `MDReader.sln` e selecione `MDReader` como projeto de inicialização.
+
+### Android
+
+Requisitos adicionais: workload `android`, Android SDK API 36 / build-tools 36.0.0 e JDK 21.
 
 ```powershell
-dotnet build .\MDReader.sln -c Release
+dotnet workload install android
+dotnet build .\MDReader.Android.sln -c Debug
 ```
 
-No Visual Studio, abra `MDReader.sln`, use o projeto `MDReader` como projeto de inicialização e execute com **F5** ou **Ctrl+F5**. O suporte a desenvolvimento desktop com .NET deve estar instalado.
+Se necessário, informe a instalação local:
 
-## Como usar
+```powershell
+dotnet build .\MDReader.Android\MDReader.Android.csproj -c Debug -p:AndroidSdkDirectory="C:\Android\Sdk" -p:JavaSdkDirectory="C:\Java\jdk-21"
+```
 
-1. Abra a aplicação.
-2. Clique em **Selecionar Markdown**.
-3. Escolha um arquivo `.md` ou `.markdown` no computador.
-4. Consulte o conteúdo original na aba **Texto bruto**.
-5. Abra a aba **Visualização** para ler o conteúdo formatado.
-6. Depois de editar e salvar o documento em outro programa, clique em **Recarregar**.
-7. Para trocar de documento, clique novamente em **Selecionar Markdown**.
+Esses caminhos são exemplos, não caminhos fixos do aplicativo. Use um celular ou emulador configurado para executar a interface Android.
 
-O botão **Recarregar** fica disponível depois que um arquivo é carregado. Arquivos vazios ou contendo apenas espaços em branco geram um aviso, sem encerrar a aplicação.
+## Publicação local
 
-O MDReader é um leitor: não edita nem salva alterações nos arquivos Markdown. A atualização do conteúdo é manual, pelo botão **Recarregar**.
+### Executável Windows
 
-## Gerar o executável portátil
-
-Na raiz do repositório, execute pelo **PowerShell**:
+Execute no PowerShell, na raiz do repositório:
 
 ```powershell
 .\publish.ps1
 ```
 
-Se a política de execução impedir o script, use este comando para executá-lo em um processo separado, sem alterar permanentemente a política do sistema:
+Se a política de execução bloquear o script:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\publish.ps1
 ```
 
-Execute o comando no terminal. Dar dois cliques no arquivo `.ps1` pode abrir seu conteúdo em um editor, dependendo da associação de arquivos do Windows.
+Dar dois cliques em um `.ps1` pode abrir o Bloco de Notas. O comando acima executa o script sem mudar permanentemente a política do sistema.
 
-O resultado fica em:
+Saída: **`dist\MDReader.exe`**, Release, `win-x64`, self-contained e arquivo único com compressão. O script atualiza os arquivos de publicação, sem apagar recursivamente a pasta. Não coloque documentos pessoais na saída de build.
 
-```text
-dist\MDReader.exe
-```
+Para distribuir, envie apenas o EXE, ou compacte-o em ZIP se o serviço de envio bloquear executáveis. O destinatário não precisa do SDK .NET; precisa do WebView2 Runtime para a visualização formatada.
 
-O script publica em **Release** para **`win-x64`**, inclui o runtime .NET, combina os componentes em um arquivo único, habilita compressão e desabilita os símbolos de depuração na saída.
-
-**A pasta `dist` é apagada e recriada a cada publicação.** Mantenha documentos pessoais e arquivos que deseja preservar fora dela.
-
-Para abrir a pasta de saída:
+### APK assinado
 
 ```powershell
-explorer .\dist
-```
-
-Também é possível gerar a mesma saída diretamente pelo .NET:
-
-```powershell
-dotnet publish .\MDReader\MDReader.csproj -c Release -r win-x64 --self-contained true -o .\dist /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:EnableCompressionInSingleFile=true /p:DebugType=None /p:DebugSymbols=false
-```
-
-## Distribuir o aplicativo
-
-1. Gere uma publicação com `publish.ps1`.
-2. Compacte o arquivo `dist\MDReader.exe` em um `.zip`, se o serviço de envio não aceitar executáveis.
-3. Envie o arquivo ou anexe o pacote a uma Release do GitHub.
-4. Quem receber deve extrair o `.zip`, quando houver, e abrir `MDReader.exe`.
-
-O executável pode ser colocado em outra pasta do computador. Ele não depende de permanecer dentro de `bin` ou `dist`, nem exige o código-fonte, o PowerShell ou o Visual Studio para ser usado.
-
-Imagens e outros recursos referenciados por um documento Markdown continuam sendo arquivos separados. Para compartilhar também o documento, preserve a organização dos seus recursos relativos.
-
-As pastas `bin`, `obj`, `dist` e `dist-android` são ignoradas pelo Git. Uma cópia do APK distribuído é versionada na pasta [downloads/android](downloads/android), além de estar disponível na Release do GitHub.
-
-## Versão Android e APK
-
-### Instalar no celular
-
-A versão Android requer **Android 8.0 ou superior** e inclui suporte a ARM de 32 bits, ARM64 e x64. O celular não precisa ter .NET instalado.
-
-1. Abra a pasta [downloads/android](downloads/android) e baixe o [MDReader.apk](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader.apk), ou use a cópia disponível na [Release Android](https://github.com/PedroHda/MDReader/releases/tag/android-v1.0.0).
-2. Envie esse arquivo ao celular e abra-o pelo gerenciador de arquivos.
-3. Se o Android solicitar, autorize esse gerenciador a instalar aplicativos dessa fonte.
-4. Conclua a instalação e abra **MDReader**.
-5. Toque em **Abrir arquivo** e selecione um `.md` ou `.markdown`.
-6. Alterne entre **Visualização** e **Texto bruto**, ou use o botão de recarregar para atualizar o conteúdo.
-
-O seletor usa o [Storage Access Framework do Android](https://developer.android.com/training/data-storage/shared/documents-files), com acesso ao documento escolhido, sem solicitar permissão ampla para o armazenamento. Quando o provedor permite acesso persistente, o último arquivo é reaberto ao iniciar o aplicativo.
-
-### Gerar novamente o APK
-
-No computador de desenvolvimento, instale o SDK .NET 10, a carga de trabalho `android`, o Android SDK com a plataforma API 36 e um JDK compatível, como o JDK 21. Esses componentes também podem ser instalados pelo suporte Android do Visual Studio.
-
-```powershell
-dotnet workload install android
-dotnet build .\MDReader.Android.sln -c Release
-powershell -NoProfile -ExecutionPolicy Bypass -File .\publish-android.ps1
-```
-
-O script gera um **APK Release assinado** em:
-
-```text
-dist-android\MDReader.apk
-```
-
-Essa pasta é independente de `dist`, usada pelo Windows. A publicação Android substitui apenas o APK de saída e não apaga a distribuição Windows.
-
-A cópia em `downloads/android` representa a versão disponibilizada no repositório. Ao distribuir uma nova versão, atualize o APK dessa pasta e o arquivo `SHA256SUMS` antes de enviar o commit ao GitHub.
-
-Se o SDK ou o JDK estiverem em locais não detectados automaticamente, informe os diretórios:
-
-```powershell
+.\publish-android.ps1
+# Com instalações do SDK/JDK não detectadas automaticamente:
 .\publish-android.ps1 -AndroidSdkDirectory "C:\Android\Sdk" -JavaSdkDirectory "C:\Java\jdk-21"
 ```
 
-Os caminhos acima são exemplos; use as pastas da sua instalação. Para publicar uma atualização, aumente o código da versão e defina o nome exibido:
+Saída: **`dist-android\MDReader.apk`**. Windows e Android têm pastas de saída independentes.
+
+Na primeira publicação local, o script cria a assinatura em `.local-signing/mdreader.keystore` e uma senha protegida pelo Windows em `.local-signing/android-password.clixml`. A pasta é ignorada pelo Git. Publicações seguintes reutilizam a chave.
+
+**Preserve a chave e a senha em backup seguro.** A senha CLIXML é vinculada ao usuário e ao computador Windows. Copiar apenas esse arquivo para outra máquina não permite recuperá-la.
+
+Ao atualizar o APK, aumente o código da versão:
 
 ```powershell
-.\publish-android.ps1 -VersionCode 2 -VersionName "1.0.1"
+.\publish-android.ps1 -VersionName "1.1.1" -VersionCode 10101
 ```
 
-Na primeira publicação, o script cria uma chave de assinatura em `.local-signing/mdreader.keystore` e uma senha aleatória protegida pelo Windows em `.local-signing/android-password.clixml`. Essa pasta é ignorada pelo Git. O script reutiliza a mesma chave nas publicações seguintes; as credenciais não são exibidas no terminal.
+Para atualizar as cópias públicas e os checksums, após gerar ambas as plataformas:
 
-**Preserve a chave de assinatura e sua senha para instalar futuras versões como atualização.** A senha no arquivo `.clixml` é vinculada ao usuário e ao computador Windows que a criou. Para migrar a assinatura para outra máquina, exporte a senha de forma segura junto com o keystore; apenas copiar o `.clixml` não permite recuperá-la em outro computador.
-
-### Particularidades da versão Android
-
-- Limite de 5 MiB por documento, com leitura em segundo plano e indicador de carregamento.
-- Validação da extensão mesmo quando o provedor informa um tipo MIME genérico.
-- Tratamento de arquivos vazios, binários, codificação inválida, permissões revogadas e arquivos removidos.
-- JavaScript, HTML embutido ativo e acesso direto a arquivos locais são bloqueados na visualização Android.
-- Links HTTP/HTTPS são abertos no navegador externo. Imagens HTTPS podem exigir internet.
-- Imagens locais relativas não são carregadas: selecionar um documento não concede acesso automático à pasta e aos seus arquivos vizinhos.
-- É um leitor, sem edição de documentos, atualização automática ou publicação na Play Store.
-
-O formato APK é configurado com a propriedade [AndroidPackageFormats](https://learn.microsoft.com/dotnet/android/building-apps/build-properties#androidpackageformats). A compilação e os testes automatizados não substituem a verificação em um celular ou emulador; veja os cenários de teste abaixo.
-
-## Estrutura do projeto
-
-```text
-MDReader/
-|-- .gitignore
-|-- MDReader.sln
-|-- MDReader.Android.sln
-|-- README.md
-|-- publish.ps1
-|-- publish-android.ps1
-|-- downloads/
-|   `-- android/
-|       |-- MDReader.apk
-|       |-- README.md
-|       `-- SHA256SUMS
-|-- docs/
-|   |-- examples/
-|   |   `-- guia.md
-|   `-- images/
-|       |-- logo.png
-|       |-- windows-preview.jpg
-|       |-- windows-table-code.jpg
-|       `-- windows-raw.jpg
-|-- MDReader.Core/
-|   |-- MDReader.Core.csproj
-|   |-- MarkdownContentReader.cs
-|   `-- MarkdownHtmlRenderer.cs
-|-- MDReader.Core.Tests/
-|   |-- MDReader.Core.Tests.csproj
-|   `-- MarkdownTests.cs
-|-- MDReader.Android/
-|   |-- MDReader.Android.csproj
-|   |-- AndroidManifest.xml
-|   |-- MainActivity.cs
-|   |-- Resources/
-|   |-- Services/
-|   `-- Ui/
-|-- MDReader/
-|   |-- MDReader.csproj
-|   |-- Program.cs
-|   |-- Assets/
-|   |   `-- MD.ico
-|   |-- Models/
-|   |   `-- MarkdownDocument.cs
-|   |-- Rendering/
-|   |   `-- MarkdownPreviewRenderer.cs
-|   |-- Services/
-|   |   |-- MarkdownFileException.cs
-|   |   |-- MarkdownFileReader.cs
-|   |   `-- MarkdownFileValidator.cs
-|   `-- Ui/
-|       |-- MainForm.cs
-|       `-- MainForm.resx
-|-- dist/                         # Executável Windows; ignorada pelo Git
-|-- dist-android/                 # APK Android; ignorada pelo Git
-`-- .local-signing/               # Assinatura privada local; ignorada pelo Git
+```powershell
+.\scripts\Update-Downloads.ps1 -AndroidApk .\dist-android\MDReader.apk -WindowsExe .\dist\MDReader.exe -Version "1.1.0"
 ```
 
-| Arquivo | Responsabilidade |
+As saídas intermediárias `bin`, `obj`, `dist` e `dist-android` são ignoradas pelo Git; as cópias em `downloads` são versionadas.
+
+## Builds e releases automáticas
+
+O workflow [ci.yml](.github/workflows/ci.yml) executa testes e builds em pushes para `master` e pull requests. Publica artefatos temporários do Windows e um APK **Debug**, não destinado à distribuição como atualização do APK Release.
+
+O workflow [release.yml](.github/workflows/release.yml) é acionado por tags `vMAJOR.MINOR.PATCH`. Ele gera EXE e APK Release, publica uma GitHub Release com checksums e atualiza `downloads` em `master`.
+
+Antes de usar a publicação automática, o mantenedor precisa configurar em **Settings > Secrets and variables > Actions**:
+
+| Secret | Conteúdo |
 | --- | --- |
-| [Program.cs](MDReader/Program.cs) | Inicializa o Windows Forms e abre a janela principal |
-| [MainForm.cs](MDReader/Ui/MainForm.cs) | Monta a interface, abre o seletor e apresenta documentos e mensagens |
-| [MarkdownDocument.cs](MDReader/Models/MarkdownDocument.cs) | Representa o caminho, nome e conteúdo do documento e identifica conteúdo vazio |
-| [MarkdownFileValidator.cs](MDReader/Services/MarkdownFileValidator.cs) | Valida o caminho, a existência do arquivo e a extensão |
-| [MarkdownFileReader.cs](MDReader/Services/MarkdownFileReader.cs) | Lê o arquivo com `File.ReadAllText` e trata falhas de acesso e leitura |
-| [MarkdownFileException.cs](MDReader/Services/MarkdownFileException.cs) | Define as exceções específicas de validação e leitura |
-| [MarkdownPreviewRenderer.cs](MDReader/Rendering/MarkdownPreviewRenderer.cs) | Integra o HTML compartilhado ao controle WinForms e define a base dos recursos locais |
-| [MarkdownHtmlRenderer.cs](MDReader.Core/MarkdownHtmlRenderer.cs) | Converte Markdown em HTML com estilos adaptáveis para as duas interfaces |
-| [MarkdownContentReader.cs](MDReader.Core/MarkdownContentReader.cs) | Valida a extensão e lê streams com limite de tamanho e cancelamento no Android |
-| [MainActivity.cs](MDReader.Android/MainActivity.cs) | Interface Android, seleção, recarga, mensagens e estado do documento |
-| [AndroidMarkdownFileReader.cs](MDReader.Android/Services/AndroidMarkdownFileReader.cs) | Obtém nome e conteúdo do documento pelo ContentResolver do Android |
-| [publish.ps1](publish.ps1) | Gera o executável portátil na pasta `dist` |
-| [publish-android.ps1](publish-android.ps1) | Assina e gera o APK na pasta `dist-android` |
+| `ANDROID_KEYSTORE_BASE64` | Keystore de produção codificado em Base64 |
+| `ANDROID_SIGNING_PASSWORD` | Senha da mesma chave, alias `mdreader` |
 
-`MDReader.sln` contém os projetos necessários à versão Windows. `MDReader.Android.sln` contém a versão Android, a biblioteca compartilhada e os testes, permitindo desenvolver para Windows sem instalar as ferramentas Android.
+Esses secrets **não são configurados pelo código** e nunca devem ser commitados. Use a chave existente para permitir atualização das instalações atuais. O workflow precisa poder escrever conteúdo no repositório; regras de proteção de branch podem bloquear a atualização de `downloads`.
 
-O fluxo principal é: **seleção do arquivo > validação > leitura > documento > texto bruto e HTML renderizado**.
-
-```mermaid
-flowchart TD
-    File["Arquivo .md ou .markdown"] --> Windows["Windows: OpenFileDialog e leitura local"]
-    File --> Android["Android: seletor de documentos e ContentResolver"]
-    Windows --> Source["Conteúdo Markdown validado"]
-    Android --> Source
-    Source --> Raw["Aba Texto bruto"]
-    Source --> Renderer["MDReader.Core: Markdig e estilos HTML"]
-    Renderer --> Desktop["WebBrowser do Windows"]
-    Renderer --> Mobile["WebView do Android"]
-```
-
-No Android, a leitura de streams também utiliza `MarkdownContentReader`, com limite de tamanho e cancelamento. No Windows, `MarkdownFileReader` mantém a leitura local com `File.ReadAllText`. As duas interfaces compartilham a conversão para HTML.
-
-## Renderização e limitações
-
-- No Windows, a visualização usa o controle `WebBrowser` do WinForms, que utiliza o mecanismo legado de renderização do Windows. A aparência pode diferir de navegadores modernos e do GitHub.
-- No Windows, o diretório do arquivo Markdown é usado como base para resolver caminhos relativos, como `![Imagem](imagens/foto.png)`.
-- A leitura de arquivos locais não exige conexão. Imagens e outros recursos com endereços remotos podem precisar de acesso à internet.
-- Os blocos de código são formatados visualmente, mas não há destaque de sintaxe por linguagem integrado.
-- Não há renderização integrada de diagramas Mermaid nem de fórmulas matemáticas com MathJax ou KaTeX.
-- A visualização Windows permite HTML embutido e não inclui uma etapa de sanitização. Abra documentos de fontes confiáveis. No Android, o HTML embutido é escapado, e o WebView mantém JavaScript desabilitado.
-- A leitura usa UTF-8 por padrão, com detecção de marca de codificação (BOM) pelo .NET. Não há seletor de codificação na interface.
-- No Windows, o arquivo inteiro é lido e renderizado de uma vez. Documentos muito grandes podem deixar a interface temporariamente ocupada. No Android, a leitura ocorre em segundo plano e tem limite de tamanho.
-- O script `publish.ps1` publica para Windows 64 bits (`win-x64`); `publish-android.ps1` publica para Android. Não há instalador Windows, associação automática de arquivos ou atualização automática implementados.
-
-## Verificação e testes manuais
-
-Para conferir a compilação e a formatação do código:
+Depois da configuração e de enviar os commits:
 
 ```powershell
-dotnet build .\MDReader.sln
-dotnet format .\MDReader.sln --verify-no-changes
-dotnet test .\MDReader.Core.Tests\MDReader.Core.Tests.csproj
-dotnet build .\MDReader.Android.sln -c Release
-dotnet format .\MDReader.Android.sln --verify-no-changes
+git tag v1.1.1
+git push origin v1.1.1
 ```
 
-Os testes xUnit verificam as marcações Markdown, a configuração HTML para cada plataforma, as extensões permitidas, as codificações UTF-8/UTF-16, arquivos vazios, conteúdo binário, cancelamento e limite de tamanho. Execute-os com SDK .NET 10.
+O código Android é calculado como `major * 10000 + minor * 100 + patch`; minor e patch devem estar entre 0 e 99. Atualize também as versões dos projetos e [docs/release-notes.md](docs/release-notes.md) antes de uma nova versão. Uma Release pode ser publicada manualmente com os scripts locais enquanto os secrets não estiverem configurados.
 
-Use estes cenários para verificar o comportamento da interface Windows:
+## Segurança e privacidade
+
+- O aplicativo não altera os arquivos Markdown e não envia o histórico a um servidor próprio.
+- HTML embutido é escapado nas duas plataformas. Scripts do documento, frames e formulários são bloqueados.
+- No Windows, somente o código interno de busca e aparência é executado pela aplicação; o conteúdo Markdown não é avaliado como JavaScript nem recebe objetos nativos.
+- No Android, JavaScript permanece desabilitado; a busca usa as APIs nativas do WebView.
+- Imagens locais são limitadas aos caminhos de imagem sob a pasta do documento/autorizada. Travessia `../`, caminhos absolutos e extensões não permitidas são rejeitados.
+- Imagens HTTPS remotas podem acessar a internet quando o documento é aberto. Links HTTP/HTTPS abrem no navegador externo.
+- Histórico, nomes, caminhos, favoritos, preferências e posições são salvos localmente, em JSON sem criptografia. Evite compartilhar esse arquivo caso os caminhos sejam sensíveis.
+- Windows: `%LOCALAPPDATA%\MDReader\reader-state.json`; o perfil WebView2 e um cache HTML ficam no mesmo diretório do aplicativo.
+- Android: armazenamento interno privado do aplicativo. Permissões persistentes são concedidas apenas pelo seletor do sistema.
+- Chaves, senhas e credenciais não fazem parte da distribuição nem do repositório.
+
+## Limitações
+
+- É um leitor, não um editor de Markdown.
+- Não há sincronização na nuvem, login, versão iOS, instalador Windows ou atualização automática do próprio aplicativo.
+- Atualização automática do **conteúdo** não é atualização automática do **executável**.
+- Não há destaque de sintaxe por linguagem, Mermaid ou renderização matemática integrada.
+- HTML embutido aparece como texto por segurança. O visual pode diferir de GitHub ou de outros leitores.
+- UTF-8 é o padrão; BOM de UTF-8/UTF-16 é reconhecido. Não há seletor manual de codificação.
+- Busca formatada pode não combinar uma expressão que atravesse elementos de formatação diferentes. No Windows e no texto bruto Android, os destaques são limitados a 1.000 ocorrências.
+- Imagens locais Android exigem abertura a partir da pasta autorizada. Arquivos selecionados isoladamente não concedem esse acesso.
+- A retomada da leitura usa uma posição proporcional; alterações no conteúdo ou no tamanho da janela podem deslocar o trecho exibido.
+- O histórico mantém até 100 documentos. Permissões revogadas ou arquivos movidos exigem nova seleção.
+
+## Testes
+
+```powershell
+dotnet test .\MDReader.Core.Tests\MDReader.Core.Tests.csproj -c Release
+dotnet build .\MDReader.sln -c Release
+dotnet build .\MDReader.Android.sln -c Debug
+```
+
+A suíte cobre marcações Markdown, HTML não executável, links internos, extração de sumário, leitura UTF-8/UTF-16, arquivos vazios/binários, cancelamento, limite de tamanho, extensões, caminhos de imagens, preferências corrompidas, favoritos e restauração de estado.
+
+### Verificação manual
 
 | Cenário | Resultado esperado |
 | --- | --- |
-| Abrir um `.md` ou `.markdown` válido | Nome do arquivo, texto bruto, visualização e mensagem de sucesso |
-| Abrir um arquivo com extensão `.MD` | Arquivo aceito normalmente |
-| Selecionar outra extensão usando o filtro de todos os arquivos | Mensagem de extensão não permitida |
-| Abrir um arquivo vazio ou contendo apenas espaços | Aviso de arquivo vazio; aplicação continua aberta |
-| Cancelar o seletor | O documento atual permanece carregado |
-| Editar e salvar o arquivo em outro editor; clicar em Recarregar | Conteúdo atualizado nas duas abas |
-| Remover ou mover o arquivo; clicar em Recarregar | Mensagem amigável de arquivo inexistente |
-| Abrir um arquivo sem permissão de leitura | Mensagem amigável de falha de acesso |
-| Abrir um documento longo | Conteúdo acessível pela rolagem |
-| Abrir o executável publicado em outra pasta | Aplicação inicia sem depender da pasta do projeto |
+| Abrir `.md`, `.markdown` ou extensão em maiúsculas | Nome e conteúdo nas duas abas |
+| Selecionar extensão diferente, arquivo removido ou sem acesso | Mensagem amigável; app permanece aberto |
+| Abrir arquivo vazio | Aviso, sem encerrar o aplicativo |
+| Buscar texto e navegar pelas setas | Resultado destacado e navegação entre ocorrências |
+| Clicar em um título do sumário | Rolagem até o título correto |
+| Alterar tema, fonte, zoom e largura; reiniciar | Preferências restauradas |
+| Favoritar e reabrir um documento | Favorito preservado, posição retomada aproximadamente |
+| Salvar o arquivo em outro editor | Recarga automática, quando habilitada e suportada |
+| Inserir HTML/JavaScript no Markdown | Código não executado |
+| Imagens sob a pasta do documento / fora dela | Imagem válida acessível; caminho fora da pasta bloqueado |
+| Rodar EXE fora da pasta do projeto | App inicia normalmente |
+| Android: Abrir pasta, selecionar documento com imagem | Acesso apenas pela pasta autorizada |
+| Android: Compartilhar arquivo / Abrir com | Documento recebido e extensão validada |
+| Atualizar APK com mesma chave e versão maior | Instalação como atualização |
 
-No Android, confira também:
-
-| Cenário | Resultado esperado |
-| --- | --- |
-| Instalar e abrir o APK | Tela inicial com seletor e abas |
-| Escolher um documento em Downloads ou em um provedor de arquivos | Nome, texto bruto e HTML exibidos |
-| Escolher uma extensão não permitida | Erro amigável, preservando o documento anterior |
-| Recarregar um documento editado, vazio ou removido | Atualização ou aviso correspondente, sem encerrar o app |
-| Girar o celular e alternar entre as abas | Documento continua acessível, sem sobrepor as barras do sistema |
-| Fechar e abrir o app após selecionar um arquivo persistente | Último documento é reaberto |
-| Abrir documento com HTML/JavaScript embutido | Código não é executado pelo WebView |
-| Escolher um arquivo maior que o limite | Mensagem de tamanho máximo |
-| Publicar uma atualização com a mesma chave e código de versão maior | Instalação como atualização da versão anterior |
-
-Para conferir a formatação, crie um arquivo `.md` com este conteúdo opcional:
-
-````markdown
-# Documento de teste
-
-## Formatação
-
-**Negrito**, *itálico*, ~~tachado~~ e `código inline`.
-
-> Uma citação de exemplo.
-
-- Primeiro item
-- Segundo item
-    - Subitem
-
-1. Etapa um
-2. Etapa dois
-
-- [x] Documento aberto
-- [ ] Conferir visualização
-
-| Recurso | Situação |
-| --- | --- |
-| Texto bruto | Disponível |
-| Visualização | Disponível |
-
-```csharp
-Console.WriteLine("Olá, Markdown!");
-```
-
----
-````
-
-Esse arquivo é apenas uma sugestão de teste. A aplicação pode abrir qualquer arquivo com uma das extensões permitidas.
+A validação desta versão inclui build Windows/Android e testes automatizados. As capturas documentam testes reais no Windows. O emulador Android desta máquina não iniciou por falta de aceleração de hardware; a interface Android ainda requer verificação em dispositivo ou emulador funcional.
 
 ## Solução de problemas
 
-| Problema | O que verificar |
+| Problema | Solução |
 | --- | --- |
-| `dotnet` não é reconhecido | Instale o SDK .NET compatível e abra um novo terminal |
-| O `.ps1` abre no Bloco de Notas | Execute o comando no PowerShell, conforme a seção de publicação |
-| Scripts estão desabilitados | Use o comando com `-ExecutionPolicy Bypass` mostrado acima |
-| O projeto ou script não é encontrado | Abra o terminal na raiz do repositório, onde está `MDReader.sln` |
-| O executável não aparece em `dist` | Confira se o publish terminou com sucesso e revise os erros do terminal |
-| A publicação não consegue substituir o executável | Feche a cópia do MDReader aberta a partir de `dist` e tente novamente |
-| Extensão não permitida | Selecione um documento Markdown com extensão `.md` ou `.markdown` |
-| Conteúdo desatualizado | Salve o documento no editor e clique em **Recarregar** |
-| Acentos incorretos no documento | Salve o arquivo como UTF-8 no editor e recarregue |
-| Imagem local não aparece | Verifique o caminho relativo à pasta do documento e a existência da imagem |
-| Uma sintaxe aparece como texto ou com aparência diferente | Consulte as limitações de renderização e compare com a aba **Texto bruto** |
-| O build Android informa workload ausente | Instale a carga de trabalho `android` do .NET 10 |
-| Android SDK ou JDK não encontrado | Confira a instalação e use os parâmetros de diretório do script Android |
-| Android não consegue atualizar uma instalação existente | Use o APK assinado com a mesma chave e um código de versão maior |
-| Android perdeu acesso ao documento | Toque em **Abrir arquivo** e conceda acesso novamente pelo seletor |
+| `dotnet` não reconhecido | Instale o SDK .NET 10 e reabra o terminal |
+| `.ps1` abre no Bloco de Notas | Execute-o pelo PowerShell, conforme os comandos acima |
+| Projeto ou script não encontrado | Abra o terminal na raiz que contém `MDReader.sln` |
+| Visualização Windows indisponível | Instale o WebView2 Runtime; consulte o texto bruto enquanto isso |
+| Publish não consegue substituir o EXE | Feche a cópia em execução na pasta de saída |
+| Imagem local não aparece | Confira o caminho; no Android, use Abrir pasta |
+| Acentos incorretos | Salve como UTF-8 no editor e recarregue |
+| Arquivo não atualiza | Salve no editor, habilite recarga automática ou use Recarregar |
+| Android perdeu acesso | Selecione novamente o documento ou a pasta |
+| Android não instala como atualização | Confira assinatura e código de versão maior |
+| Workload Android ausente | Execute `dotnet workload install android` |
+| SDK/JDK não encontrado | Informe os parâmetros de diretório ao script |
+| Release automática falha por assinatura | Configure os dois secrets e preserve o alias `mdreader` |
+| Histórico não foi salvo | Confira acesso ao armazenamento local; documentos originais não são afetados |
 
-## Contribuições
+## Contribuições e licença
 
-Relate problemas nas [Issues do repositório](https://github.com/PedroHda/MDReader/issues), incluindo a mensagem exibida e um trecho mínimo de Markdown que reproduza o comportamento, sem dados pessoais.
+Relate problemas nas [Issues](https://github.com/PedroHda/MDReader/issues), incluindo a mensagem e um trecho mínimo de Markdown que reproduza a falha, sem dados pessoais. Execute os testes e builds relacionados antes de abrir um pull request.
 
-Para contribuir com código, crie um branch, faça a alteração e execute as verificações de compilação e formatação antes de abrir um pull request. Descreva o comportamento esperado e como a mudança foi testada.
-
-## Licença
-
-O repositório ainda não contém um arquivo `LICENSE`. Uma licença de uso, modificação e redistribuição precisa ser definida pelo autor.
+O repositório ainda não contém um arquivo `LICENSE`. A licença de uso, modificação e redistribuição precisa ser definida pelo autor.

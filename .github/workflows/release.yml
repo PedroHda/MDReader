@@ -1,0 +1,31 @@
+name: Publish release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_SIGNING_PASSWORD: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: dotnet workload install android
+      - name: Install Android SDK packages
+        shell: pwsh
+        run: '& "$env:ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager.bat" "platforms;android-36" "build-tools;36.0.0"'
+      - run: dotnet test MDReader.Core.Tests/MDReader.Core.Tests.csproj -c Release
+      - run: ./scripts/Publish-Release.ps1 -Tag $env:GITHUB_REF_NAME
+        shell: pwsh

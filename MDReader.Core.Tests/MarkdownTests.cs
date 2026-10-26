@@ -38,12 +38,12 @@ public sealed class MarkdownTests
     }
 
     [Fact]
-    public void DesktopRetainsRelativeResourceBaseAndEmbeddedHtml()
+    public void DesktopEscapesEmbeddedHtmlAndEncodesResourceBase()
     {
-        var html = new MarkdownHtmlRenderer().Render("<b>HTML</b>", "file:///C:/docs/?a=1&b=2", allowEmbeddedHtml: true);
-        Assert.Contains("<b>HTML</b>", html);
-        Assert.Contains("file:///C:/docs/?a=1&amp;b=2", html);
-        Assert.DoesNotContain("Content-Security-Policy", html);
+        var html = new MarkdownHtmlRenderer().Render("<b>HTML</b>", "https://files.mdreader/?a=1&b=2");
+        Assert.DoesNotContain("<b>HTML</b>", html);
+        Assert.Contains("https://files.mdreader/?a=1&amp;b=2", html);
+        Assert.Contains("script-src 'none'", html);
     }
 
     [Theory]

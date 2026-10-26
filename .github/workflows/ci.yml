@@ -1,0 +1,50 @@
+name: Build and test
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet test MDReader.Core.Tests/MDReader.Core.Tests.csproj -c Release
+  windows:
+    needs: tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - run: ./publish.ps1
+        shell: pwsh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MDReader-Windows
+          path: dist/MDReader.exe
+  android:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: dotnet workload install android
+      - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - run: dotnet build MDReader.Android/MDReader.Android.csproj -c Debug -p:AndroidSdkDirectory="$ANDROID_HOME" -p:JavaSdkDirectory="$JAVA_HOME"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MDReader-Android-Debug
+          path: MDReader.Android/bin/Debug/net10.0-android/*-Signed.apk

@@ -8,8 +8,8 @@
     <SupportedOSPlatformVersion>26.0</SupportedOSPlatformVersion>
     <ApplicationId>com.pedrohda.mdreader</ApplicationId>
     <ApplicationTitle>MDReader</ApplicationTitle>
-    <ApplicationVersion>1</ApplicationVersion>
-    <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+    <ApplicationVersion>10100</ApplicationVersion>
+    <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
     <AndroidPackageFormats>apk</AndroidPackageFormats>
     <RuntimeIdentifiers>android-arm;android-arm64;android-x64</RuntimeIdentifiers>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>

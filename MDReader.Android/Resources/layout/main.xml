@@ -22,8 +22,14 @@
               android:textSize="22sp"
               android:textStyle="bold"
               android:textColor="#202327"
-              android:layout_width="wrap_content"
+              android:layout_weight="1"
+              android:layout_width="0dp"
               android:layout_height="wrap_content" />
+    <ImageButton android:id="@+id/more_options"
+                 android:src="@android:drawable/ic_menu_more"
+                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                 android:contentDescription="Opções de leitura"
+                 android:layout_width="48dp" android:layout_height="48dp" />
   </LinearLayout>
   <TextView android:id="@+id/file_name"
             android:text="@string/no_file"
@@ -91,6 +97,22 @@
                  android:layout_width="0dp"
                  android:layout_height="wrap_content" />
   </RadioGroup>
+  <LinearLayout android:orientation="horizontal" android:gravity="center_vertical"
+                android:paddingStart="16dp" android:paddingEnd="12dp"
+                android:layout_width="match_parent" android:layout_height="wrap_content">
+    <EditText android:id="@+id/search_query" android:hint="Buscar no documento"
+              android:inputType="text" android:singleLine="true" android:imeOptions="actionSearch"
+              android:maxLength="256" android:textSize="14sp" android:layout_weight="1"
+              android:layout_width="0dp" android:layout_height="48dp" />
+    <TextView android:id="@+id/search_count" android:textSize="12sp"
+              android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    <ImageButton android:id="@+id/search_previous" android:src="@android:drawable/ic_media_previous"
+                 android:contentDescription="Resultado anterior" android:background="?android:attr/selectableItemBackgroundBorderless"
+                 android:layout_width="48dp" android:layout_height="48dp" />
+    <ImageButton android:id="@+id/search_next" android:src="@android:drawable/ic_media_next"
+                 android:contentDescription="Próximo resultado" android:background="?android:attr/selectableItemBackgroundBorderless"
+                 android:layout_width="48dp" android:layout_height="48dp" />
+  </LinearLayout>
   <ProgressBar android:id="@+id/loading"
                style="?android:attr/progressBarStyleHorizontal"
                android:indeterminate="true"

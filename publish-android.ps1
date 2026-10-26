@@ -1,9 +1,11 @@
 param(
     [ValidateRange(1, 2100000000)]
-    [int]$VersionCode = 1,
-    [string]$VersionName = "1.0.0",
+    [int]$VersionCode = 10100,
+    [string]$VersionName = "1.1.0",
     [string]$AndroidSdkDirectory,
-    [string]$JavaSdkDirectory
+    [string]$JavaSdkDirectory,
+    [string]$SigningKeyStorePath,
+    [string]$SigningPasswordEnvironmentName
 )
 
 $ErrorActionPreference = "Stop"
@@ -13,13 +15,14 @@ $publishPath = Join-Path $rootPath "MDReader.Android\bin\apk-publish"
 $distributionPath = Join-Path $rootPath "dist-android"
 $signingPath = Join-Path $rootPath ".local-signing"
 $keyStorePath = Join-Path $signingPath "mdreader.keystore"
+if ($SigningKeyStorePath) { $keyStorePath = (Resolve-Path -LiteralPath $SigningKeyStorePath).Path }
 $passwordPath = Join-Path $signingPath "android-password.clixml"
 
 if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
     throw "Instale o SDK .NET 10 e a carga de trabalho android antes de publicar."
 }
 
-if ((Test-Path -LiteralPath $keyStorePath) -and -not (Test-Path -LiteralPath $passwordPath)) {
+if (-not $SigningPasswordEnvironmentName -and (Test-Path -LiteralPath $keyStorePath) -and -not (Test-Path -LiteralPath $passwordPath)) {
     throw "A senha da chave existente nao foi encontrada. Restaure android-password.clixml do seu backup."
 }
 
@@ -27,7 +30,7 @@ New-Item -ItemType Directory -Path $signingPath -Force | Out-Null
 $previousSigningPassword = $env:MDREADER_ANDROID_SIGNING_PASSWORD
 
 try {
-    if (-not (Test-Path -LiteralPath $passwordPath)) {
+    if (-not $SigningPasswordEnvironmentName -and -not (Test-Path -LiteralPath $passwordPath)) {
         $randomBytes = New-Object byte[] 32
         $generator = [System.Security.Cryptography.RandomNumberGenerator]::Create()
         try { $generator.GetBytes($randomBytes) } finally { $generator.Dispose() }
@@ -35,9 +38,16 @@ try {
         $securePassword | Export-Clixml -LiteralPath $passwordPath
     }
 
-    $securePassword = Import-Clixml -LiteralPath $passwordPath
-    $credential = New-Object System.Net.NetworkCredential("mdreader", $securePassword)
-    $env:MDREADER_ANDROID_SIGNING_PASSWORD = $credential.Password
+    if ($SigningPasswordEnvironmentName) {
+        $env:MDREADER_ANDROID_SIGNING_PASSWORD = [Environment]::GetEnvironmentVariable($SigningPasswordEnvironmentName)
+        if (-not $env:MDREADER_ANDROID_SIGNING_PASSWORD -or -not (Test-Path -LiteralPath $keyStorePath)) {
+            throw "Chave de assinatura ou senha do ambiente CI nao encontrada."
+        }
+    } else {
+        $securePassword = Import-Clixml -LiteralPath $passwordPath
+        $credential = New-Object System.Net.NetworkCredential("mdreader", $securePassword)
+        $env:MDREADER_ANDROID_SIGNING_PASSWORD = $credential.Password
+    }
 
     if (-not (Test-Path -LiteralPath $keyStorePath)) {
         $keyToolCommand = Get-Command keytool -ErrorAction SilentlyContinue
