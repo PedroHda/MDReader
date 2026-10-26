@@ -254,13 +254,14 @@ Na primeira publicação local, o script cria a assinatura em `.local-signing/md
 Ao atualizar o APK, aumente o código da versão:
 
 ```powershell
-.\publish-android.ps1 -VersionName "1.1.1" -VersionCode 10101
+.\publish-android.ps1 -VersionName "1.1.2" -VersionCode 10102
 ```
 
 Para atualizar as cópias públicas e os checksums, após gerar ambas as plataformas:
 
 ```powershell
-.\scripts\Update-Downloads.ps1 -AndroidApk .\dist-android\MDReader.apk -WindowsExe .\dist\MDReader.exe -Version "1.1.0"
+.\scripts\Update-Downloads.ps1 -WindowsExe .\dist\MDReader.exe -Version "1.1.0"
+.\scripts\Update-Downloads.ps1 -AndroidApk .\dist-android\MDReader.apk -Version "1.1.1"
 ```
 
 As saídas intermediárias `bin`, `obj`, `dist` e `dist-android` são ignoradas pelo Git; as cópias em `downloads` são versionadas.
@@ -289,8 +290,8 @@ Esses secrets **não são configurados pelo código** e nunca devem ser commitad
 Depois da configuração e de enviar os commits:
 
 ```powershell
-git tag v1.1.1
-git push origin v1.1.1
+git tag v1.1.2
+git push origin v1.1.2
 ```
 
 O código Android é calculado como `major * 10000 + minor * 100 + patch`; minor e patch devem estar entre 0 e 99. Atualize também as versões dos projetos e [docs/release-notes.md](docs/release-notes.md) antes de uma nova versão. Uma Release pode ser publicada manualmente com os scripts locais enquanto os secrets não estiverem configurados.
@@ -352,7 +353,7 @@ O workflow [Android startup](.github/workflows/android-startup.yml) instala o AP
 | Android: Compartilhar arquivo / Abrir com | Documento recebido e extensão validada |
 | Atualizar APK com mesma chave e versão maior | Instalação como atualização |
 
-A validação desta versão inclui build Windows/Android e testes automatizados. As capturas documentam testes reais no Windows. O emulador Android desta máquina não iniciou por falta de aceleração de hardware; a interface Android ainda requer verificação em dispositivo ou emulador funcional.
+A validação inclui build Windows/Android, testes automatizados do Core e o teste de inicialização do APK Release em emuladores no GitHub Actions. As capturas documentam testes reais no Windows. A verificação em celulares físicos continua recomendada, especialmente ao atualizar uma instalação e abrir documentos de diferentes provedores.
 
 ## Solução de problemas
 
