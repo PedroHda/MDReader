@@ -32,6 +32,8 @@ jobs:
   android:
     needs: tests
     runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: ${{ runner.temp }}/android-sdk
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-dotnet@v5
@@ -42,7 +44,8 @@ jobs:
           distribution: temurin
           java-version: '21'
       - run: dotnet workload install android
-      - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Install Android SDK dependencies
+        run: dotnet build MDReader.Android/MDReader.Android.csproj -t:InstallAndroidDependencies -f net10.0-android -p:AndroidSdkDirectory="$ANDROID_HOME" -p:JavaSdkDirectory="$JAVA_HOME" -p:AcceptAndroidSDKLicenses=True
       - run: dotnet build MDReader.Android/MDReader.Android.csproj -c Debug -p:AndroidSdkDirectory="$ANDROID_HOME" -p:JavaSdkDirectory="$JAVA_HOME"
       - uses: actions/upload-artifact@v4
         with:

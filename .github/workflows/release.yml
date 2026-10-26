@@ -8,6 +8,7 @@ jobs:
   publish:
     runs-on: windows-latest
     env:
+      ANDROID_HOME: ${{ runner.temp }}/android-sdk
       GH_TOKEN: ${{ github.token }}
       ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
       ANDROID_SIGNING_PASSWORD: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
@@ -23,9 +24,9 @@ jobs:
           distribution: temurin
           java-version: '21'
       - run: dotnet workload install android
-      - name: Install Android SDK packages
+      - name: Install Android SDK dependencies
         shell: pwsh
-        run: '& "$env:ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager.bat" "platforms;android-36" "build-tools;36.0.0"'
+        run: dotnet build MDReader.Android/MDReader.Android.csproj -t:InstallAndroidDependencies -f net10.0-android "-p:AndroidSdkDirectory=$env:ANDROID_HOME" "-p:JavaSdkDirectory=$env:JAVA_HOME" -p:AcceptAndroidSDKLicenses=True
       - run: dotnet test MDReader.Core.Tests/MDReader.Core.Tests.csproj -c Release
       - run: ./scripts/Publish-Release.ps1 -Tag $env:GITHUB_REF_NAME
         shell: pwsh
