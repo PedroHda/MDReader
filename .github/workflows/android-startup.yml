@@ -4,7 +4,8 @@ on:
   push:
     branches: [master]
     paths:
-      - downloads/android/MDReader.apk
+      - downloads/android/*.apk
+      - downloads/android/version.json
       - scripts/Test-Android-Startup.sh
       - .github/workflows/android-startup.yml
 permissions:

@@ -1,6 +1,7 @@
 param(
     [ValidateRange(1, 2100000000)]
     [int]$VersionCode = 10101,
+    [ValidatePattern('^\d+\.\d+\.\d+$')]
     [string]$VersionName = "1.1.1",
     [string]$AndroidSdkDirectory,
     [string]$JavaSdkDirectory,
@@ -95,7 +96,7 @@ try {
     if ($signedPackages.Count -ne 1) { throw "Nao foi encontrado um unico APK assinado na pasta de publicacao." }
 
     New-Item -ItemType Directory -Path $distributionPath -Force | Out-Null
-    $finalApkPath = Join-Path $distributionPath "MDReader.apk"
+    $finalApkPath = Join-Path $distributionPath "MDReader-$VersionName.apk"
     Copy-Item -LiteralPath $signedPackages[0].FullName -Destination $finalApkPath -Force
     Write-Host ""
     Write-Host "APK assinado gerado em:"

@@ -1,15 +1,15 @@
 # MDReader para Android
 
-O instalador está nesta pasta: **[MDReader.apk](MDReader.apk)**.
+O instalador está nesta pasta: **[MDReader-1.1.1.apk](MDReader-1.1.1.apk)**.
 
-**[Baixar APK diretamente](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader.apk)** · [Notas das versões](https://github.com/PedroHda/MDReader/releases)
+**[Baixar APK diretamente](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader-1.1.1.apk)** · [Notas das versões](https://github.com/PedroHda/MDReader/releases)
 
 | Informação | Valor |
 | --- | --- |
 | Versão | 1.1.1 (10101) |
 | Sistema mínimo | Android 8.0 |
 | Arquiteturas | ARM, ARM64 e x64 |
-| Arquivo | `MDReader.apk` |
+| Arquivo | `MDReader-1.1.1.apk` |
 | Metadados e tamanho | [version.json](version.json) |
 
 ## Instalar
@@ -31,7 +31,9 @@ O APK usa a mesma chave de assinatura da versão 1.0.0, permitindo instalação 
 Para conferir no PowerShell, a partir da raiz do repositório:
 
 ```powershell
-Get-FileHash .\downloads\android\MDReader.apk -Algorithm SHA256
+Get-FileHash .\downloads\android\MDReader-1.1.1.apk -Algorithm SHA256
 ```
 
 As instruções de desenvolvimento, publicação e as limitações de cada plataforma estão no [README principal](../../README.md).
+
+Os APKs seguem o padrão `MDReader-<versão>.apk`. O arquivo [version.json](version.json) identifica o APK atual e seu checksum.

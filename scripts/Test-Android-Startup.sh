@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-apk="${1:-downloads/android/MDReader.apk}"
+if [[ $# -gt 0 ]]; then
+    apk="$1"
+else
+    apk="downloads/android/$(node -p "JSON.parse(require('fs').readFileSync('downloads/android/version.json', 'utf8')).file")"
+fi
 output="artifacts/android-startup"
 package="com.pedrohda.mdreader"
 mkdir -p "$output"

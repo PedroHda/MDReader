@@ -13,7 +13,7 @@ Leitor de Markdown para **Windows e Android**, desenvolvido em C# com .NET 10. A
 | Plataforma | Arquivo | Requisitos |
 | --- | --- | --- |
 | Windows x64 | [MDReader.exe](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/windows/MDReader.exe) · [Pasta Windows](downloads/windows) | Windows 64 bits e WebView2 Runtime |
-| Android | [MDReader.apk](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader.apk) · [Pasta Android](downloads/android) | Android 8.0 ou superior; ARM, ARM64 ou x64 |
+| Android | [MDReader-1.1.1.apk](https://github.com/PedroHda/MDReader/raw/refs/heads/master/downloads/android/MDReader-1.1.1.apk) · [Pasta Android](downloads/android) | Android 8.0 ou superior; ARM, ARM64 ou x64 |
 
 [Releases e notas das versões](https://github.com/PedroHda/MDReader/releases) · [Histórico de builds](https://github.com/PedroHda/MDReader/actions)
 
@@ -25,7 +25,7 @@ Os arquivos [SHA256SUMS do Windows](downloads/windows/SHA256SUMS) e [SHA256SUMS 
 
 ```powershell
 Get-FileHash .\downloads\windows\MDReader.exe -Algorithm SHA256
-Get-FileHash .\downloads\android\MDReader.apk -Algorithm SHA256
+Get-FileHash .\downloads\android\MDReader-1.1.1.apk -Algorithm SHA256
 ```
 
 ## Índice
@@ -245,7 +245,7 @@ Para distribuir, envie apenas o EXE, ou compacte-o em ZIP se o serviço de envio
 .\publish-android.ps1 -AndroidSdkDirectory "C:\Android\Sdk" -JavaSdkDirectory "C:\Java\jdk-21"
 ```
 
-Saída: **`dist-android\MDReader.apk`**. Windows e Android têm pastas de saída independentes.
+Saída: **`dist-android\MDReader-1.1.1.apk`**. O nome segue o padrão `MDReader-<versão>.apk`, usando o parâmetro `-VersionName`. Windows e Android têm pastas de saída independentes.
 
 Na primeira publicação local, o script cria a assinatura em `.local-signing/mdreader.keystore` e uma senha protegida pelo Windows em `.local-signing/android-password.clixml`. A pasta é ignorada pelo Git. Publicações seguintes reutilizam a chave.
 
@@ -261,7 +261,7 @@ Para atualizar as cópias públicas e os checksums, após gerar ambas as platafo
 
 ```powershell
 .\scripts\Update-Downloads.ps1 -WindowsExe .\dist\MDReader.exe -Version "1.1.0"
-.\scripts\Update-Downloads.ps1 -AndroidApk .\dist-android\MDReader.apk -Version "1.1.1"
+.\scripts\Update-Downloads.ps1 -AndroidApk .\dist-android\MDReader-1.1.1.apk -Version "1.1.1"
 ```
 
 As saídas intermediárias `bin`, `obj`, `dist` e `dist-android` são ignoradas pelo Git; as cópias em `downloads` são versionadas.
@@ -269,7 +269,7 @@ As saídas intermediárias `bin`, `obj`, `dist` e `dist-android` são ignoradas 
 Para atualizar somente o APK, sem substituir o executável Windows:
 
 ```powershell
-.\scripts\Update-Downloads.ps1 -AndroidApk .\dist-android\MDReader.apk -Version "1.1.1"
+.\scripts\Update-Downloads.ps1 -AndroidApk .\dist-android\MDReader-1.1.1.apk -Version "1.1.1"
 ```
 
 ## Builds e releases automáticas
